@@ -6,7 +6,7 @@ if (loading) return;
 loading = true;
 
 const res = await fetch(
-`fetch("http://localhost:3000/api/anime/top?page=1")
+fetch(`https://api.jikan.moe/v4/top/anime?page=${page}`)
 const data = await res.json();
 
 data.data.forEach(anime => createCard(anime));
@@ -35,5 +35,6 @@ document.body.offsetHeight - 200
 loadAnime();
 }
 });
+
 
 loadAnime();
