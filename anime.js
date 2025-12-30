@@ -1,22 +1,31 @@
-const id = new URLSearchParams(window.location.search).get("id");
+import express from "express";
+import axios from "axios";
 
-fetch(`https://api.jikan.moe/v4/anime/${id}`)
-.then(res => res.json())
-.then(data => {
-document.getElementById("title").textContent = data.data.title;
-document.getElementById("poster").src =
-data.data.images.jpg.image_url;
-document.getElementById("description").textContent =
-data.data.synopsis;
+const router = express.Router();
+
+/* GET top anime */
+router.get("/top", async (req, res) => {
+try {
+const page = req.query.page || 1;
+const response = await axios.get(
+`https://api.jikan.moe/v4/top/anime?page=${page}`
+);
+res.json(response.data);
+} catch (err) {
+res.status(500).json({ error: "Failed to fetch top anime" });
+}
 });
 
-fetch(`https://api.jikan.moe/v4/anime/${id}/episodes`)
-.then(res => res.json())
-.then(data => {
-const list = document.getElementById("episodes");
-data.data.forEach(ep => {
-const li = document.createElement("li");
-li.textContent = `Episode ${ep.mal_id}: ${ep.title}`;
-list.appendChild(li);
+/* GET anime by ID */
+router.get("/:id", async (req, res) => {
+try {
+const response = await axios.get(
+`https://api.jikan.moe/v4/anime/${req.params.id}`
+);
+res.json(response.data);
+} catch (err) {
+res.status(500).json({ error: "Failed to fetch anime details" });
+}
 });
-});
+
+export default router;
